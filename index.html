@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кралство на знанието</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #d9c9ff, #c7eaff);
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  color: #40335d;
+}
+.card {
+  background: white;
+  width: min(420px, 85%);
+  padding: 30px;
+  border-radius: 25px;
+  text-align: center;
+  box-shadow: 0 10px 30px #5553;
+}
+h1 { color: #7956bd; }
+#question { font-size: 28px; margin: 25px 0; }
+button {
+  width: 100%;
+  padding: 15px;
+  margin: 7px 0;
+  border: none;
+  border-radius: 14px;
+  background: #eee5ff;
+  color: #49356f;
+  font-size: 19px;
+  cursor: pointer;
+}
+button:hover { background: #d9c9ff; }
+#message { font-size: 19px; min-height: 28px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>👑 Кралство на знанието</h1>
+  <p>Изпълни мисията и спечели звездички!</p>
+  <p id="progress">Въпрос 1 от 5</p>
+  <div id="question"></div>
+  <div id="answers"></div>
+  <p id="message">Готов ли си за приключението?</p>
+  <h3>⭐ Точки: <span id="score">0</span></h3>
+  <button id="next" onclick="nextQuestion()" hidden>Следваща мисия ➜</button>
+</div>
+<script>
+const questions = [
+  {q:"Колко е 5 + 3?", a:["7","8","9"], c:"8"},
+  {q:"Колко е 10 - 4?", a:["5","6","7"], c:"6"},
+  {q:"Коя дума е правилно написана?", a:["ученик","ученек","ученикк"], c:"ученик"},
+  {q:"Колко са дните в една седмица?", a:["5","6","7"], c:"7"},
+  {q:"Кое устройство използваме за писане на компютър?", a:["Мишка","Клавиатура","Монитор"], c:"Клавиатура"}
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+
+function showQuestion() {
+  answered = false;
+  document.getElementById("progress").textContent =
+    `Въпрос ${current + 1} от ${questions.length}`;
+  document.getElementById("question").textContent = questions[current].q;
+  document.getElementById("message").textContent = "Избери верния отговор! 🌟";
+  document.getElementById("next").hidden = true;
+  const area = document.getElementById("answers");
+  area.innerHTML = "";
+  questions[current].a.forEach(answer => {
+    const btn = document.createElement("button");
+    btn.textContent = answer;
+    btn.onclick = () => checkAnswer(answer);
+    area.appendChild(btn);
+  });
+}
+
+function checkAnswer(answer) {
+  if (answered) return;
+  answered = true;
+  if (answer === questions[current].c) {
+    score++;
+    document.getElementById("message").textContent = "Браво! ⭐ Правилен отговор!";
+  } else {
+    document.getElementById("message").textContent = "Не се отказвай! 💜";
+  }
+  document.getElementById("score").textContent = score;
+  document.getElementById("next").hidden = false;
+}
+
+function nextQuestion() {
+  current++;
+  if (current === questions.length) {
+    document.getElementById("question").textContent = "🏆 Мисията е завършена!";
+    document.getElementById("answers").innerHTML = "";
+    document.getElementById("progress").textContent = "Край на играта";
+    document.getElementById("message").textContent =
+      `Спечели ${score} от ${questions.length} звезди!`;
+    document.getElementById("next").textContent = "Играй отново ↻";
+    document.getElementById("next").onclick = () => {
+      current = 0;
+      score = 0;
+      document.getElementById("score").textContent = 0;
+      document.getElementById("next").textContent = "Следваща мисия ➜";
+      document.getElementById("next").onclick = nextQuestion;
+      showQuestion();
+    };
+    document.getElementById("next").hidden = false;
+  } else {
+    showQuestion();
+  }
+}
+
+showQuestion();
+</script>
+</body>
+</html>
